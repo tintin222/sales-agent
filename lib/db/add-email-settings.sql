@@ -1,0 +1,19 @@
+-- Add email integration settings to company_settings table
+ALTER TABLE company_settings 
+ADD COLUMN IF NOT EXISTS email_provider VARCHAR(50) DEFAULT 'gmail',
+ADD COLUMN IF NOT EXISTS email_host VARCHAR(255),
+ADD COLUMN IF NOT EXISTS email_port INTEGER,
+ADD COLUMN IF NOT EXISTS email_secure BOOLEAN DEFAULT true,
+ADD COLUMN IF NOT EXISTS email_user VARCHAR(255),
+ADD COLUMN IF NOT EXISTS email_password TEXT,
+ADD COLUMN IF NOT EXISTS email_from VARCHAR(255),
+ADD COLUMN IF NOT EXISTS smtp_host VARCHAR(255),
+ADD COLUMN IF NOT EXISTS smtp_port INTEGER,
+ADD COLUMN IF NOT EXISTS smtp_secure BOOLEAN DEFAULT true,
+ADD COLUMN IF NOT EXISTS smtp_user VARCHAR(255),
+ADD COLUMN IF NOT EXISTS smtp_password TEXT,
+ADD COLUMN IF NOT EXISTS oauth_client_id TEXT,
+ADD COLUMN IF NOT EXISTS oauth_client_secret TEXT,
+ADD COLUMN IF NOT EXISTS oauth_refresh_token TEXT,
+ADD COLUMN IF NOT EXISTS oauth_access_token TEXT,
+ADD COLUMN IF NOT EXISTS oauth_token_expiry TIMESTAMP;

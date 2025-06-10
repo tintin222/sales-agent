@@ -1,36 +1,103 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Sales Agent - AI-Powered Pricing Quote System
 
-## Getting Started
+An automated sales pricing quote system that leverages Google Gemini's large context window to generate accurate pricing responses based on your company's pricing documents.
 
-First, run the development server:
+## Features
 
+- **Document-Based Pricing**: Upload Excel, PDF, Word, or text documents containing your pricing information
+- **Large Context Processing**: Utilizes Gemini's 2M token context window to process all pricing documents at once
+- **Human-in-the-Loop**: All AI-generated responses require human review before sending
+- **Simple Architecture**: Direct database access without complex RAG systems
+- **Multi-Format Support**: Parse Excel tables, PDFs, Word documents, and plain text
+
+## Quick Start
+
+1. Clone the repository and install dependencies:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Set up your environment variables in `.env.local`:
+```
+DATABASE_URL=postgresql://user:password@localhost:5432/sales_agent
+GEMINI_API_KEY=your_gemini_api_key_here
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Initialize the database:
+```bash
+npm run db:init
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. Run the development server:
+```bash
+npm run dev
+```
 
-## Learn More
+5. Open [http://localhost:3000](http://localhost:3000)
 
-To learn more about Next.js, take a look at the following resources:
+## Setup Guide
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 1. Database Setup
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Create a PostgreSQL database and update the `DATABASE_URL` in `.env.local`.
 
-## Deploy on Vercel
+### 2. Gemini API Key
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Get your API key from [Google AI Studio](https://makersuite.google.com/app/apikey) and add it to `.env.local`.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### 3. Initial Configuration
+
+1. Go to Admin Panel (`/admin/documents`)
+2. Upload your pricing documents:
+   - **Pricing Criteria**: Rules for when different prices apply
+   - **Pricing Calculations**: How to calculate prices (formulas, tables)
+   - **General Information**: Additional context (terms, conditions)
+
+3. Configure system prompts (`/admin/prompts`)
+4. Start processing pricing requests from the Dashboard
+
+## How It Works
+
+1. **Upload Documents**: Admin uploads all pricing-related documents
+2. **Email Request**: Client sends pricing request via email or web form
+3. **AI Processing**: System sends all documents + request to Gemini in one context
+4. **Response Generation**: Gemini generates complete pricing response
+5. **Human Review**: Sales rep reviews and approves/edits response
+6. **Send Response**: Approved response sent to client
+
+## Project Structure
+
+```
+/app
+  /admin          - Admin panel for document/prompt management
+  /dashboard      - Sales rep interface for processing requests
+  /api           - API endpoints
+/lib
+  /db            - Database queries and schema
+  /services      - Document parsing and Gemini integration
+/types          - TypeScript type definitions
+```
+
+## API Endpoints
+
+- `POST /api/process-email` - Process pricing request
+- `GET/POST /api/documents` - Manage pricing documents
+- `GET/POST /api/prompts` - Manage system prompts
+- `POST /api/documents/upload` - Upload and parse documents
+
+## Development
+
+```bash
+# Run development server
+npm run dev
+
+# Build for production
+npm run build
+
+# Start production server
+npm start
+```
+
+## License
+
+MIT

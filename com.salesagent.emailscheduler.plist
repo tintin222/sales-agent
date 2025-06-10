@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.salesagent.emailscheduler</string>
+    
+    <key>ProgramArguments</key>
+    <array>
+        <string>/usr/bin/curl</string>
+        <string>-X</string>
+        <string>GET</string>
+        <string>http://localhost:3000/api/cron/send-scheduled-emails</string>
+        <string>-H</string>
+        <string>Authorization: Bearer your-secret-key</string>
+    </array>
+    
+    <key>StartInterval</key>
+    <integer>60</integer>
+    
+    <key>RunAtLoad</key>
+    <true/>
+    
+    <key>StandardOutPath</key>
+    <string>/tmp/salesagent-scheduler.log</string>
+    
+    <key>StandardErrorPath</key>
+    <string>/tmp/salesagent-scheduler-error.log</string>
+</dict>
+</plist>

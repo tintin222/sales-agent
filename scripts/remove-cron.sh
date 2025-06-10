@@ -1,0 +1,22 @@
+#!/bin/bash
+
+echo "🔍 Current cron jobs:"
+crontab -l 2>/dev/null || echo "No cron jobs found"
+
+echo ""
+echo "📝 To remove the automation cron job:"
+echo ""
+echo "1. Open crontab editor:"
+echo "   crontab -e"
+echo ""
+echo "2. Find and delete this line:"
+echo "   */5 * * * * curl -s http://localhost:3000/api/email/check-automated > /dev/null 2>&1"
+echo ""
+echo "3. Save and exit:"
+echo "   - Press 'Esc'"
+echo "   - Type ':wq' and press Enter"
+echo ""
+echo "Or remove ALL cron jobs with:"
+echo "   crontab -r"
+echo ""
+echo "⚠️  Warning: 'crontab -r' removes ALL cron jobs, not just the automation one!"
