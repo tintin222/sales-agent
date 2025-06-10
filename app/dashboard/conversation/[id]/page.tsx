@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { Mail, Sparkles, Loader, Clock, CheckCircle, AlertCircle, Bot, CircleDot, XCircle, User, FileText, Calendar, Edit, ChevronDown, ChevronUp, X, Send, Paperclip } from 'lucide-react';
+import { Mail, Sparkles, Loader, Clock, CheckCircle, AlertCircle, Bot, CircleDot, XCircle, User, FileText, Calendar, Edit, ChevronDown, ChevronUp, X, Paperclip } from 'lucide-react';
 import { GEMINI_MODELS, type GeminiModelId } from '@/lib/services/gemini';
 import QuickEditMessage from '@/components/quick-edit-message';
 import ScheduleEmailDialog from '@/components/schedule-email-dialog';
@@ -21,6 +21,9 @@ interface Message {
   attachment_count?: number;
   created_at: string;
   approved_by_user_id?: number;
+  approved_by_user?: {
+    name: string;
+  };
 }
 
 interface Conversation {
@@ -30,6 +33,8 @@ interface Conversation {
   status: string;
   conversation_status?: string;
   thread_id?: string;
+  created_at?: string;
+  last_our_response_at?: string;
 }
 
 export default function ConversationPage() {
@@ -57,6 +62,7 @@ export default function ConversationPage() {
   useEffect(() => {
     fetchConversation();
     fetchTemplatesAndAgents();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [conversationId]);
 
   const fetchConversation = async () => {
@@ -355,25 +361,6 @@ export default function ConversationPage() {
     }
   };
 
-  const getStatusLabel = (status?: string) => {
-    switch (status) {
-      case 'waiting_for_client':
-        return 'Waiting for client';
-      case 'negotiating':
-        return 'Negotiating';
-      case 'closed_won':
-        return 'Won';
-      case 'closed_lost':
-        return 'Lost';
-      case 'stale':
-        return 'Stale';
-      case 'active':
-        return 'Active';
-      default:
-        return 'Active';
-    }
-  };
-
   if (loading) {
     return (
       <div className="p-8">
@@ -499,7 +486,9 @@ export default function ConversationPage() {
             <div>
               <p className="text-sm text-gray-600">Thread Age</p>
               <p className="text-2xl font-semibold text-gray-900">
-                {Math.floor((Date.now() - new Date(conversation.created_at).getTime()) / (1000 * 60 * 60))}h
+                {conversation.created_at 
+                  ? Math.floor((Date.now() - new Date(conversation.created_at).getTime()) / (1000 * 60 * 60)) 
+                  : 0}h
               </p>
             </div>
             <Clock className="w-8 h-8 text-blue-400" />
@@ -611,7 +600,7 @@ export default function ConversationPage() {
       {needsResponse && hasUnsentResponse && (
         <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
           <p className="text-sm text-yellow-800">
-            <strong>Note:</strong> There's already a draft response below waiting to be sent. 
+            <strong>Note:</strong> There&apos;s already a draft response below waiting to be sent. 
             Please review and send it before generating a new response.
           </p>
         </div>
@@ -697,7 +686,7 @@ export default function ConversationPage() {
             </button>
           </div>
         </div>
-        {[...messages].reverse().map((message, index) => {
+        {[...messages].reverse().map((message) => {
           const isExpanded = expandedMessages.has(message.id);
           const messageContent = message.final_response || message.gemini_response || message.content;
           const preview = getMessagePreview(messageContent);
