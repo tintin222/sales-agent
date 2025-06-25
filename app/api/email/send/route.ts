@@ -72,10 +72,10 @@ export async function POST(req: NextRequest) {
       message: 'Email sent successfully'
     });
     
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error sending email:', error);
     return NextResponse.json({ 
-      error: error.message || 'Failed to send email' 
+      error: error instanceof Error ? error.message : 'Failed to send email' 
     }, { status: 500 });
   }
 }

@@ -7,7 +7,7 @@ const COMPANY_ID = getActiveCompanyId();
 
 export async function PATCH(
   req: NextRequest,
-  context: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const user = getUserFromRequest(req);
@@ -15,8 +15,8 @@ export async function PATCH(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const params = await context.params;
-    const conversationId = parseInt(params.id);
+    const { id } = await params;
+    const conversationId = parseInt(id);
     const { conversation_status } = await req.json();
 
     // Update conversation status

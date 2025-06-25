@@ -95,10 +95,10 @@ export async function GET() {
       emails: processed
     });
     
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error checking emails:', error);
     return NextResponse.json({ 
-      error: error.message || 'Failed to check emails' 
+      error: error instanceof Error ? error.message : 'Failed to check emails' 
     }, { status: 500 });
   }
 }

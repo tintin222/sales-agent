@@ -6,7 +6,7 @@ import Link from 'next/link';
 
 export default function AutomationTriggerPage() {
   const [running, setRunning] = useState(false);
-  const [result, setResult] = useState<any>(null);
+  const [result, setResult] = useState<{ processed: number; details?: Array<{ subject: string; from: string; automated: boolean; reason?: string; conversationId?: string }> } | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const runAutomation = async () => {
@@ -23,8 +23,8 @@ export default function AutomationTriggerPage() {
       }
       
       setResult(data);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
       setRunning(false);
     }
@@ -87,15 +87,15 @@ export default function AutomationTriggerPage() {
             </h3>
             <div className="text-sm text-green-800 space-y-1">
               <p>• Processed: {result.processed} emails</p>
-              <p>• Automated responses: {result.details?.filter((d: any) => d.automated).length || 0}</p>
-              <p>• Skipped: {result.details?.filter((d: any) => d.reason).length || 0}</p>
+              <p>• Automated responses: {result.details?.filter((d) => d.automated).length || 0}</p>
+              <p>• Skipped: {result.details?.filter((d) => d.reason).length || 0}</p>
             </div>
             
             {result.details && result.details.length > 0 && (
               <div className="mt-4">
                 <h4 className="font-medium text-green-900 mb-2">Details:</h4>
                 <div className="space-y-2">
-                  {result.details.map((detail: any, index: number) => (
+                  {result.details.map((detail, index) => (
                     <div key={index} className="p-2 bg-white rounded border border-green-200">
                       <p className="text-sm font-medium">{detail.subject}</p>
                       <p className="text-xs text-gray-600">From: {detail.from}</p>
@@ -140,7 +140,7 @@ export default function AutomationTriggerPage() {
           <li>Make sure automation is enabled in the settings</li>
           <li>Configure your AI model and domain filters</li>
           <li>Send a test email to your configured Gmail account</li>
-          <li>Click "Run Automation Now" to process the email</li>
+          <li>Click &quot;Run Automation Now&quot; to process the email</li>
           <li>Check the results and view the conversation</li>
         </ol>
       </div>

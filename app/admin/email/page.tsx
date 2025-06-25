@@ -60,8 +60,8 @@ export default function EmailSettingsPage() {
         const data = await response.json();
         setSettings(data);
       }
-    } catch (error) {
-      console.error('Error fetching email settings:', error);
+    } catch {
+      console.error('Error fetching email settings');
     }
   };
 
@@ -103,8 +103,8 @@ export default function EmailSettingsPage() {
       } else {
         alert('Failed to save email settings');
       }
-    } catch (error) {
-      console.error('Error saving email settings:', error);
+    } catch {
+      console.error('Error saving email settings');
       alert('Error saving email settings');
     } finally {
       setSaving(false);
@@ -126,7 +126,7 @@ export default function EmailSettingsPage() {
         success: response.ok,
         message: data.message || (response.ok ? 'Connection successful!' : 'Connection failed')
       });
-    } catch (error) {
+    } catch {
       setTestResult({
         success: false,
         message: 'Failed to test connection'
@@ -243,7 +243,7 @@ export default function EmailSettingsPage() {
               )}
               {settings.email_provider === 'office365' && (
                 <p className="mt-1 text-xs text-gray-500">
-                  You may need to enable "Authenticated SMTP" in your Office 365 admin settings.
+                  You may need to enable &quot;Authenticated SMTP&quot; in your Office 365 admin settings.
                 </p>
               )}
             </div>

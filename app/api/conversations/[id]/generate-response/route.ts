@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { 
   getConversationMessages,
-  createMessage,
   getActiveSystemPrompt,
   getActivePricingDocuments,
   getCompanySettings,
@@ -184,10 +183,10 @@ ${template.variables && template.variables.length > 0 ? `Available variables to 
       response 
     });
     
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error generating response:', error);
     return NextResponse.json({ 
-      error: error.message || 'Failed to generate response' 
+      error: error instanceof Error ? error.message : 'Failed to generate response' 
     }, { status: 500 });
   }
 }

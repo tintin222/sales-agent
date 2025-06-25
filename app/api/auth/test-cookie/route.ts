@@ -15,7 +15,7 @@ export async function GET(req: NextRequest) {
   });
 }
 
-export async function POST(req: NextRequest) {
+export async function POST() {
   // Test setting a cookie
   const response = NextResponse.json({
     message: 'Test cookie set'

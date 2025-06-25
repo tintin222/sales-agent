@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { FileText, Download, File, Image, FileAudio, FileVideo, Loader2 } from 'lucide-react';
 import { MessageAttachment } from '@/types';
 
@@ -12,11 +12,7 @@ export default function MessageAttachments({ messageId }: MessageAttachmentsProp
   const [attachments, setAttachments] = useState<MessageAttachment[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchAttachments();
-  }, [messageId]);
-
-  const fetchAttachments = async () => {
+  const fetchAttachments = useCallback(async () => {
     try {
       const response = await fetch(`/api/messages/${messageId}/attachments`);
       if (response.ok) {
@@ -28,7 +24,11 @@ export default function MessageAttachments({ messageId }: MessageAttachmentsProp
     } finally {
       setLoading(false);
     }
-  };
+  }, [messageId]);
+
+  useEffect(() => {
+    fetchAttachments();
+  }, [fetchAttachments]);
 
   const getFileIcon = (contentType: string) => {
     if (contentType.startsWith('image/')) return Image;

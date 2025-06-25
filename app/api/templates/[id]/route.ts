@@ -7,7 +7,7 @@ const COMPANY_ID = getActiveCompanyId();
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const user = getUserFromRequest(request);
@@ -15,10 +15,11 @@ export async function GET(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const { id } = await params;
     const { data: template, error } = await supabaseAdmin
       .from('email_templates')
       .select('*')
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('company_id', COMPANY_ID)
       .single();
 
@@ -27,15 +28,15 @@ export async function GET(
     }
 
     return NextResponse.json(template);
-  } catch (error) {
-    console.error('Error fetching template:', error);
+  } catch {
+    console.error('Error fetching template');
     return NextResponse.json({ error: 'Failed to fetch template' }, { status: 500 });
   }
 }
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const user = getUserFromRequest(request);
@@ -43,10 +44,18 @@ export async function PUT(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const { id } = await params;
     const body = await request.json();
     const { name, subject, content, variables, is_active } = body;
 
-    const updateData: any = {
+    const updateData: {
+      updated_at: string;
+      name?: string;
+      subject?: string;
+      content?: string;
+      variables?: string[];
+      is_active?: boolean;
+    } = {
       updated_at: new Date().toISOString()
     };
     if (name !== undefined) updateData.name = name;
@@ -58,7 +67,7 @@ export async function PUT(
     const { data: template, error } = await supabaseAdmin
       .from('email_templates')
       .update(updateData)
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('company_id', COMPANY_ID)
       .select()
       .single();
@@ -68,15 +77,15 @@ export async function PUT(
     }
 
     return NextResponse.json(template);
-  } catch (error) {
-    console.error('Error updating template:', error);
+  } catch {
+    console.error('Error updating template');
     return NextResponse.json({ error: 'Failed to update template' }, { status: 500 });
   }
 }
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const user = getUserFromRequest(request);
@@ -84,13 +93,15 @@ export async function DELETE(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const { id } = await params;
+
     const { data, error } = await supabaseAdmin
       .from('email_templates')
       .update({ 
         is_active: false,
         updated_at: new Date().toISOString()
       })
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('company_id', COMPANY_ID)
       .select('id');
 
@@ -99,8 +110,8 @@ export async function DELETE(
     }
 
     return NextResponse.json({ success: true });
-  } catch (error) {
-    console.error('Error deleting template:', error);
+  } catch {
+    console.error('Error deleting template');
     return NextResponse.json({ error: 'Failed to delete template' }, { status: 500 });
   }
 }

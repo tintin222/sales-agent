@@ -11,7 +11,7 @@ interface QuickEditMessageProps {
 
 export default function QuickEditMessage({ content, onSave, onCancel }: QuickEditMessageProps) {
   const [editedContent, setEditedContent] = useState(content);
-  const [showActions, setShowActions] = useState(true);
+  const [showActions] = useState(true);
   const contentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -120,8 +120,7 @@ export default function QuickEditMessage({ content, onSave, onCancel }: QuickEdi
       const codeMatch = text.match(/(\d+(?:,\d{3})*(?:\.\d{2})?)\s*(USD|EUR|GBP|JPY|CAD|AUD)/);
       const contextMatch = text.match(/(?:price|cost|fee|total|subtotal|amount|charge).*?(\d+(?:,\d{3})*(?:\.\d{2})?)/i);
       
-      let match = null;
-      let numberToReplace = null;
+      let numberToReplace: string | null = null;
       
       if (currencyMatch) {
         numberToReplace = currencyMatch[2];

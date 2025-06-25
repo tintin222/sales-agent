@@ -114,7 +114,7 @@ export async function GET(req: NextRequest) {
         results.sent++;
         console.log(`Sent scheduled email ${message.id} to ${message.conversations.client_email}`);
 
-      } catch (error: any) {
+      } catch (error) {
         console.error(`Failed to send scheduled email ${message.id}:`, error);
         
         // Update status to failed
@@ -128,13 +128,13 @@ export async function GET(req: NextRequest) {
           .from('email_schedule_log')
           .update({
             status: 'failed',
-            error_message: error.message || 'Unknown error'
+            error_message: error instanceof Error ? error.message : 'Unknown error'
           })
           .eq('message_id', message.id)
           .eq('status', 'pending');
 
         results.failed++;
-        results.errors.push(`Message ${message.id}: ${error.message}`);
+        results.errors.push(`Message ${message.id}: ${error instanceof Error ? error.message : 'Unknown error'}`);
       }
     }
 
@@ -147,10 +147,10 @@ export async function GET(req: NextRequest) {
       timestamp: now.toISOString()
     });
 
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error in scheduled email sender:', error);
     return NextResponse.json({ 
-      error: error.message || 'Failed to process scheduled emails' 
+      error: error instanceof Error ? error.message : 'Failed to process scheduled emails' 
     }, { status: 500 });
   }
 }

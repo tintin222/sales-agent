@@ -6,7 +6,7 @@ import path from 'path';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { messageId: string; filename: string } }
+  { params }: { params: Promise<{ messageId: string; filename: string }> }
 ) {
   try {
     const user = getUserFromRequest(request);
@@ -14,7 +14,8 @@ export async function GET(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const messageId = parseInt(params.messageId);
+    const { messageId: messageIdStr, filename } = await params;
+    const messageId = parseInt(messageIdStr);
 
     // Verify user has access to this message
     const { data: message } = await supabaseAdmin
@@ -32,7 +33,7 @@ export async function GET(
       .from('message_attachments')
       .select('*')
       .eq('message_id', messageId)
-      .eq('filename', params.filename)
+      .eq('filename', filename)
       .single();
 
     if (!attachment) {

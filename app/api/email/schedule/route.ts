@@ -58,10 +58,10 @@ export async function POST(req: NextRequest) {
       scheduledFor: scheduledDate.toISOString()
     });
     
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error scheduling email:', error);
     return NextResponse.json({ 
-      error: error.message || 'Failed to schedule email' 
+      error: error instanceof Error ? error.message : 'Failed to schedule email' 
     }, { status: 500 });
   }
 }

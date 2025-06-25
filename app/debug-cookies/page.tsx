@@ -4,7 +4,12 @@ import { useState, useEffect } from 'react';
 
 export default function DebugCookiesPage() {
   const [cookies, setCookies] = useState<string[]>([]);
-  const [apiCookies, setApiCookies] = useState<any>(null);
+  const [apiCookies, setApiCookies] = useState<{
+    hasAuthToken: boolean;
+    authTokenValue: string;
+    allCookiesCount: number;
+    allCookieNames: string[];
+  } | null>(null);
 
   useEffect(() => {
     // Get client-side cookies
@@ -18,8 +23,7 @@ export default function DebugCookiesPage() {
   }, []);
 
   const testSetCookie = async () => {
-    const res = await fetch('/api/auth/test-cookie', { method: 'POST' });
-    const data = await res.json();
+    await fetch('/api/auth/test-cookie', { method: 'POST' });
     alert('Test cookie set. Refresh the page to see if it appears.');
   };
 
@@ -32,9 +36,9 @@ export default function DebugCookiesPage() {
         password: 'admin123'
       })
     });
-    const data = await res.json();
-    console.log('Login response:', data);
-    alert(`Login response: ${JSON.stringify(data)}`);
+    const responseData = await res.json();
+    console.log('Login response:', responseData);
+    alert(`Login response: ${JSON.stringify(responseData)}`);
     window.location.reload();
   };
 

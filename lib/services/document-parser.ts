@@ -36,7 +36,7 @@ function parseExcel(buffer: Buffer): string {
       header: 1, 
       defval: '',
       blankrows: false 
-    }) as any[][];
+    }) as (string | number | boolean | Date)[][];
     
     if (jsonData.length > 0) {
       fullText += `\n## ${sheetName}\n\n`;

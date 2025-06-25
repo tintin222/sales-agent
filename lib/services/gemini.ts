@@ -1,5 +1,5 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import type { GeminiContext, Message } from '@/types';
+import type { GeminiContext } from '@/types';
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 
@@ -33,16 +33,16 @@ export async function generatePricingResponse(
     const result = await model.generateContent(prompt);
     const response = await result.response;
     return response.text();
-  } catch (error: any) {
+  } catch (error) {
     console.error(`Gemini API error with model ${modelId}:`, error);
     
     // If model not found, try with default model
-    if (error.message?.includes('model') && modelId !== 'gemini-1.5-pro') {
+    if (error instanceof Error && error.message?.includes('model') && modelId !== 'gemini-1.5-pro') {
       console.log('Falling back to gemini-1.5-pro');
       return generatePricingResponse(context, 'gemini-1.5-pro');
     }
     
-    throw new Error(`Failed to generate pricing response: ${error.message}`);
+    throw new Error(`Failed to generate pricing response: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
 }
 

@@ -16,8 +16,8 @@ async function seedDatabase() {
       const company = await createCompany('Test Company');
       companyId = company.id;
       console.log('Created company:', company);
-    } catch (error: any) {
-      if (error.code === '23505') { // Unique violation
+    } catch (error) {
+      if (error instanceof Error && 'code' in error && error.code === '23505') { // Unique violation
         console.log('Company already exists, using ID 1');
       } else {
         throw error;
@@ -28,8 +28,8 @@ async function seedDatabase() {
     try {
       const user = await createUser(companyId, 'admin@test.com', 'Admin User', 'admin');
       console.log('Created user:', user);
-    } catch (error: any) {
-      if (error.code === '23505') { // Unique violation
+    } catch (error) {
+      if (error instanceof Error && 'code' in error && error.code === '23505') { // Unique violation
         console.log('User already exists');
       } else {
         throw error;

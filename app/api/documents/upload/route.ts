@@ -24,10 +24,10 @@ export async function POST(req: NextRequest) {
     try {
       content = await parseDocument(buffer, file.name);
       console.log(`Successfully parsed document, content length: ${content.length} characters`);
-    } catch (parseError: any) {
+    } catch (parseError) {
       console.error('Error parsing document:', parseError);
       return NextResponse.json({ 
-        error: `Failed to parse document: ${parseError.message}. Please ensure the file is valid.` 
+        error: `Failed to parse document: ${parseError instanceof Error ? parseError.message : 'Unknown error'}. Please ensure the file is valid.` 
       }, { status: 400 });
     }
     
@@ -42,10 +42,10 @@ export async function POST(req: NextRequest) {
     console.log(`Document saved to database with ID: ${document.id}`);
     
     return NextResponse.json(document);
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error uploading document:', error);
     return NextResponse.json({ 
-      error: error.message || 'Failed to upload document' 
+      error: error instanceof Error ? error.message : 'Failed to upload document' 
     }, { status: 500 });
   }
 }

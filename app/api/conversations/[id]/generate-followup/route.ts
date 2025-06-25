@@ -36,11 +36,11 @@ export async function POST(
 
     // Get the latest messages for context
     const sortedMessages = conversation.messages
-      .sort((a: any, b: any) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+      .sort((a: { created_at: string }, b: { created_at: string }) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
 
     // Build conversation history
     let conversationHistory = '';
-    sortedMessages.forEach((msg: any) => {
+    sortedMessages.forEach((msg: { direction: string; content: string; sent_at?: string; final_response?: string; gemini_response?: string }) => {
       if (msg.direction === 'inbound') {
         conversationHistory += `\nClient: ${msg.content}\n`;
       } else if (msg.sent_at) {
@@ -95,7 +95,7 @@ Generate a follow-up email response.`;
         calculations: documents?.find(d => d.document_type === 'calculation')?.content_text || '',
         additional: documents?.filter(d => d.document_type === 'general').map(d => d.content_text) || []
       },
-      emailThread: sortedMessages.map((msg: any) => ({
+      emailThread: sortedMessages.map((msg: { id: number; conversation_id: number; direction: string; content: string; gemini_response?: string; final_response?: string; approved_by_user_id?: number; sent_at?: string; created_at: string }) => ({
         id: msg.id,
         conversation_id: msg.conversation_id,
         direction: msg.direction,
@@ -138,8 +138,8 @@ Generate a follow-up email response.`;
       .eq('id', conversationId);
 
     return NextResponse.json({ success: true, messageId: newMessage.id });
-  } catch (error) {
-    console.error('Error generating follow-up:', error);
+  } catch {
+    console.error('Error generating follow-up');
     return NextResponse.json({ error: 'Failed to generate follow-up' }, { status: 500 });
   }
 }

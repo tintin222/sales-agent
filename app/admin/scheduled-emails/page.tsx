@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Calendar, Clock, Send, X, RefreshCw, CheckCircle, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
 
@@ -20,14 +20,7 @@ export default function ScheduledEmailsPage() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'scheduled' | 'sent' | 'failed'>('scheduled');
 
-  useEffect(() => {
-    fetchScheduledEmails();
-    // Refresh every 30 seconds
-    const interval = setInterval(fetchScheduledEmails, 30000);
-    return () => clearInterval(interval);
-  }, [filter]);
-
-  const fetchScheduledEmails = async () => {
+  const fetchScheduledEmails = useCallback(async () => {
     try {
       const response = await fetch(`/api/scheduled-emails?filter=${filter}`);
       const data = await response.json();
@@ -37,7 +30,14 @@ export default function ScheduledEmailsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [filter]);
+
+  useEffect(() => {
+    fetchScheduledEmails();
+    // Refresh every 30 seconds
+    const interval = setInterval(fetchScheduledEmails, 30000);
+    return () => clearInterval(interval);
+  }, [fetchScheduledEmails]);
 
   const cancelScheduled = async (messageId: number) => {
     if (!confirm('Are you sure you want to cancel this scheduled email?')) return;

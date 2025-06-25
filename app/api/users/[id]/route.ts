@@ -37,8 +37,8 @@ export async function GET(
     }
 
     return NextResponse.json(userData);
-  } catch (error) {
-    console.error('Error fetching user:', error);
+  } catch {
+    console.error('Error fetching user');
     return NextResponse.json(
       { error: 'Failed to fetch user' },
       { status: 500 }
@@ -65,7 +65,12 @@ export async function PUT(
     const { email, name, role, password } = await req.json();
 
     // Build update object
-    const updateData: any = {};
+    const updateData: {
+      email?: string;
+      name?: string;
+      role?: string;
+      password_hash?: string;
+    } = {};
     if (email) updateData.email = email;
     if (name) updateData.name = name;
     if (role) updateData.role = role;
@@ -97,8 +102,8 @@ export async function PUT(
     }
 
     return NextResponse.json(updatedUser);
-  } catch (error) {
-    console.error('Error updating user:', error);
+  } catch {
+    console.error('Error updating user');
     return NextResponse.json(
       { error: 'Failed to update user' },
       { status: 500 }
@@ -161,8 +166,8 @@ export async function DELETE(
     if (error) throw error;
 
     return NextResponse.json({ success: true });
-  } catch (error) {
-    console.error('Error deleting user:', error);
+  } catch {
+    console.error('Error deleting user');
     return NextResponse.json(
       { error: 'Failed to delete user' },
       { status: 500 }

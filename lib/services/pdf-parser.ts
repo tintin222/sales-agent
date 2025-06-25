@@ -5,9 +5,9 @@ export async function parsePDF(buffer: Buffer): Promise<string> {
     const pdfParse = await import('pdf-parse');
     const data = await pdfParse.default(buffer);
     return data.text;
-  } catch (error: any) {
+  } catch (error) {
     // If it's the test file error, try a different approach
-    if (error.code === 'ENOENT' && error.path?.includes('test/data')) {
+    if (error instanceof Error && 'code' in error && 'path' in error && error.code === 'ENOENT' && (error.path as string)?.includes('test/data')) {
       console.warn('PDF parse test file error, using fallback');
       return 'PDF parsing failed - please try uploading as text file';
     }

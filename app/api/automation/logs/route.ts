@@ -33,16 +33,19 @@ export async function GET() {
     if (error) throw error;
 
     // Transform the data into log entries
-    const logs = (automatedMessages || []).map((msg: { id: number; conversation_id: number; content: string; sent_at: string; created_at: string; conversations: { client_email: string; subject: string } }) => ({
-      id: msg.id,
-      conversation_id: msg.conversation_id,
-      client_email: msg.conversations.client_email,
-      subject: msg.conversations.subject,
-      processed_at: msg.sent_at || msg.created_at,
-      status: 'success' as const,
-      model_used: settings?.automation_model || 'gemini-1.5-flash',
-      response_length: msg.content?.length || 0
-    }));
+    const logs = (automatedMessages || []).map((msg) => {
+      const conversation = Array.isArray(msg.conversations) ? msg.conversations[0] : msg.conversations;
+      return {
+        id: msg.id,
+        conversation_id: msg.conversation_id,
+        client_email: conversation?.client_email || '',
+        subject: conversation?.subject || '',
+        processed_at: msg.sent_at || msg.created_at,
+        status: 'success' as const,
+        model_used: settings?.automation_model || 'gemini-1.5-flash',
+        response_length: msg.content?.length || 0
+      };
+    });
 
     // Add some simulated skipped/failed entries for demonstration
     // In production, you'd store actual automation attempts

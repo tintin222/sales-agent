@@ -42,10 +42,10 @@ export async function POST(
       message: 'Scheduled email cancelled'
     });
     
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error cancelling scheduled email:', error);
     return NextResponse.json({ 
-      error: error.message || 'Failed to cancel scheduled email' 
+      error: error instanceof Error ? error.message : 'Failed to cancel scheduled email' 
     }, { status: 500 });
   }
 }

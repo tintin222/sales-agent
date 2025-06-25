@@ -39,7 +39,7 @@ export async function GET() {
     const shouldAutomate = (email: string) => {
       if (automatedDomains.length === 0) return true; // If no domains specified, automate all
       const domain = email.split('@')[1];
-      return automatedDomains.some(d => domain.includes(d));
+      return automatedDomains.some((d: string) => domain.includes(d));
     };
     
     for (const email of emails) {
@@ -193,7 +193,7 @@ export async function GET() {
           from: email.from,
           subject: email.subject,
           automated: false,
-          error: error.message
+          error: error instanceof Error ? error.message : 'Unknown error'
         });
       }
     }
@@ -204,10 +204,10 @@ export async function GET() {
       details: processed
     });
     
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error in automated email check:', error);
     return NextResponse.json({ 
-      error: error.message || 'Failed to check emails automatically' 
+      error: error instanceof Error ? error.message : 'Failed to check emails automatically' 
     }, { status: 500 });
   }
 }

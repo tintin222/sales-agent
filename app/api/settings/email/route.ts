@@ -27,8 +27,8 @@ export async function GET() {
     };
     
     return NextResponse.json(emailSettings);
-  } catch (error) {
-    console.error('Error fetching email settings:', error);
+  } catch {
+    console.error('Error fetching email settings');
     return NextResponse.json({ error: 'Failed to fetch email settings' }, { status: 500 });
   }
 }
@@ -38,7 +38,23 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     
     // Only update password fields if they're not the masked value
-    const updates: any = {
+    const updates: {
+      email_provider: string;
+      email_host: string;
+      email_port: number;
+      email_secure: boolean;
+      email_user: string;
+      email_from: string;
+      smtp_host: string;
+      smtp_port: number;
+      smtp_secure: boolean;
+      smtp_user: string;
+      email_password?: string;
+      smtp_password?: string;
+      oauth_client_id?: string;
+      oauth_client_secret?: string;
+      oauth_refresh_token?: string;
+    } = {
       email_provider: body.email_provider,
       email_host: body.email_host,
       email_port: body.email_port,
@@ -69,11 +85,11 @@ export async function POST(req: NextRequest) {
       updates.oauth_refresh_token = body.oauth_refresh_token;
     }
     
-    const settings = await upsertCompanySettings(COMPANY_ID, updates);
+    await upsertCompanySettings(COMPANY_ID, updates);
     
     return NextResponse.json({ success: true });
-  } catch (error) {
-    console.error('Error saving email settings:', error);
+  } catch {
+    console.error('Error saving email settings');
     return NextResponse.json({ error: 'Failed to save email settings' }, { status: 500 });
   }
 }

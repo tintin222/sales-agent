@@ -46,10 +46,10 @@ export async function POST(req: NextRequest) {
       message: 'Setup completed successfully'
     });
 
-  } catch (error: any) {
+  } catch (error) {
     console.error('Setup error:', error);
     return NextResponse.json(
-      { error: error.message || 'Setup failed' },
+      { error: error instanceof Error ? error.message : 'Setup failed' },
       { status: 500 }
     );
   }

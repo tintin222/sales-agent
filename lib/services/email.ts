@@ -106,7 +106,7 @@ export async function fetchUnreadEmails(daysBack: number = 7): Promise<EmailMess
       new Promise((_, reject) => 
         setTimeout(() => reject(new Error('IMAP connection timeout')), 30000)
       )
-    ]) as any;
+    ]) as imaps.ImapSimple;
     
     console.log('Connected to IMAP server');
     await connection.openBox('INBOX');
@@ -154,8 +154,8 @@ export async function fetchUnreadEmails(daysBack: number = 7): Promise<EmailMess
       emails.push({
         uid: item.attributes.uid,
         messageId: parsed.messageId || '',
-        from: parsed.from?.value[0]?.address || '',
-        to: parsed.to?.value[0]?.address || '',
+        from: (Array.isArray(parsed.from) ? parsed.from[0] : parsed.from)?.value?.[0]?.address || '',
+        to: (Array.isArray(parsed.to) ? parsed.to[0] : parsed.to)?.value?.[0]?.address || '',
         subject: parsed.subject || '',
         text: parsed.text || '',
         html: parsed.html || undefined,
@@ -166,7 +166,7 @@ export async function fetchUnreadEmails(daysBack: number = 7): Promise<EmailMess
       });
     }
     
-    await connection.closeBox();
+    await connection.closeBox(false);
     return emails;
   } catch (error) {
     console.error('Error fetching emails:', error);
@@ -190,7 +190,7 @@ export async function markEmailAsRead(uid: number): Promise<void> {
   try {
     await connection.openBox('INBOX');
     await connection.addFlags(uid, '\\Seen');
-    await connection.closeBox();
+    await connection.closeBox(false);
   } finally {
     await connection.end();
   }
@@ -207,6 +207,14 @@ export async function sendEmailReply(
   const transporter = await createTransporter();
   const settings = await getEmailSettings();
   
+  const headers: { [key: string]: string } = {};
+  if (inReplyTo) {
+    headers['In-Reply-To'] = inReplyTo;
+  }
+  if (references) {
+    headers['References'] = references.join(' ');
+  }
+
   const mailOptions = {
     from: settings.from,
     to,
@@ -215,10 +223,7 @@ export async function sendEmailReply(
     html: content.replace(/\n/g, '<br>'),
     inReplyTo,
     references: references ? references.join(' ') : undefined,
-    headers: {
-      'In-Reply-To': inReplyTo,
-      'References': references ? references.join(' ') : undefined
-    }
+    headers
   };
   
   await transporter.sendMail(mailOptions);

@@ -113,7 +113,7 @@ export async function getConversations(
   limit = 50
 ) {
   let query = 'SELECT * FROM conversations WHERE company_id = $1';
-  const params: any[] = [companyId];
+  const params: (string | number)[] = [companyId];
   
   if (status) {
     query += ' AND status = $2';

@@ -5,7 +5,11 @@ import { useRouter } from 'next/navigation';
 
 export default function TestAuthPage() {
   const router = useRouter();
-  const [authStatus, setAuthStatus] = useState<any>(null);
+  const [authStatus, setAuthStatus] = useState<{
+    cookies: string;
+    hasAuthToken: boolean;
+    timestamp: string;
+  } | null>(null);
 
   useEffect(() => {
     // Check if we have an auth token

@@ -113,7 +113,7 @@ export default function DocumentsPage() {
         <div className="flex items-center space-x-4">
           <select
             value={selectedType}
-            onChange={(e) => setSelectedType(e.target.value as any)}
+            onChange={(e) => setSelectedType(e.target.value as 'criteria' | 'calculation' | 'general')}
             className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="criteria">Pricing Criteria</option>

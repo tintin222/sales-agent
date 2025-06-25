@@ -54,17 +54,20 @@ export async function GET(req: NextRequest) {
     if (error) throw error;
 
     // Format the response
-    const formattedEmails = data?.map(msg => ({
-      id: msg.id,
-      conversation_id: msg.conversation_id,
-      client_email: msg.conversations.client_email,
-      subject: msg.conversations.subject,
-      scheduled_send_at: msg.scheduled_send_at,
-      schedule_status: msg.schedule_status || 'scheduled',
-      content: msg.final_response || msg.gemini_response || msg.content,
-      conversation_status: msg.conversations.conversation_status,
-      sent_at: msg.sent_at
-    })) || [];
+    const formattedEmails = data?.map(msg => {
+      const conversation = Array.isArray(msg.conversations) ? msg.conversations[0] : msg.conversations;
+      return {
+        id: msg.id,
+        conversation_id: msg.conversation_id,
+        client_email: conversation?.client_email || '',
+        subject: conversation?.subject || '',
+        scheduled_send_at: msg.scheduled_send_at,
+        schedule_status: msg.schedule_status || 'scheduled',
+        content: msg.final_response || msg.gemini_response || msg.content,
+        conversation_status: conversation?.conversation_status,
+        sent_at: msg.sent_at
+      };
+    }) || [];
 
     return NextResponse.json(formattedEmails);
   } catch (error) {

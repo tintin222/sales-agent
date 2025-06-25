@@ -10,7 +10,7 @@ export default function HomePage() {
             Sales Agent
           </h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Automate your pricing quotes with AI-powered responses using Gemini's large context window
+            Automate your pricing quotes with AI-powered responses using Gemini&apos;s large context window
           </p>
         </div>
 
@@ -27,7 +27,7 @@ export default function HomePage() {
             <Zap className="w-12 h-12 text-green-600 mb-4" />
             <h3 className="text-xl font-semibold mb-2">Instant Responses</h3>
             <p className="text-gray-600">
-              Generate accurate pricing quotes in seconds using Gemini's advanced AI
+              Generate accurate pricing quotes in seconds using Gemini&apos;s advanced AI
             </p>
           </div>
 

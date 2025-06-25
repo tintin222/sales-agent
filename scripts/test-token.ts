@@ -68,8 +68,9 @@ async function testTokenGeneration() {
     }
 
     // Check token expiration
-    if (decoded.exp) {
-      const expirationDate = new Date(decoded.exp * 1000);
+    const decodedWithExp = decoded as any;
+    if (decodedWithExp.exp) {
+      const expirationDate = new Date(decodedWithExp.exp * 1000);
       const now = new Date();
       const timeUntilExpiry = expirationDate.getTime() - now.getTime();
       

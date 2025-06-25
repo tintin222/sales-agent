@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { verifyToken } from './lib/auth/config';
+import { verifyToken } from './lib/auth/edge-config';
 
 // Routes that don't require authentication
 const PUBLIC_ROUTES = ['/login', '/api/auth/login', '/api/auth/setup', '/setup', '/'];
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
   
   // Allow public routes
@@ -31,7 +31,7 @@ export function middleware(request: NextRequest) {
   }
   
   // Verify token
-  const payload = verifyToken(token);
+  const payload = await verifyToken(token);
   if (!payload) {
     // Clear invalid token and redirect to login
     const response = NextResponse.redirect(new URL('/login', request.url));

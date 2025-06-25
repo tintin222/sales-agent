@@ -13,7 +13,10 @@ export async function PATCH(
     // Get the current user from token
     const user = getUserFromRequest(req);
     
-    const updateData: any = {
+    const updateData: {
+      final_response: string;
+      approved_by_user_id?: number;
+    } = {
       final_response: body.final_response
     };
     
@@ -31,8 +34,8 @@ export async function PATCH(
     
     if (error) throw error;
     return NextResponse.json(data);
-  } catch (error) {
-    console.error('Error updating message:', error);
+  } catch {
+    console.error('Error updating message');
     return NextResponse.json({ error: 'Failed to update message' }, { status: 500 });
   }
 }

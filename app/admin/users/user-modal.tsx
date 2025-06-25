@@ -3,13 +3,15 @@
 import { useState } from 'react';
 import { X, User, Mail, Lock, Shield } from 'lucide-react';
 
+interface User {
+  id: number;
+  email: string;
+  name: string;
+  role: string;
+}
+
 interface UserModalProps {
-  user: {
-    id: number;
-    email: string;
-    name: string;
-    role: string;
-  } | null;
+  user: User | null;
   onClose: () => void;
 }
 
@@ -29,7 +31,12 @@ export default function UserModal({ user, onClose }: UserModalProps) {
     setError('');
 
     try {
-      const payload: any = {
+      const payload: {
+        email: string;
+        name: string;
+        role: string;
+        password?: string;
+      } = {
         email: formData.email,
         name: formData.name,
         role: formData.role,
@@ -60,7 +67,7 @@ export default function UserModal({ user, onClose }: UserModalProps) {
         const data = await response.json();
         setError(data.error || 'Failed to save user');
       }
-    } catch (error) {
+    } catch {
       setError('An error occurred. Please try again.');
     } finally {
       setLoading(false);

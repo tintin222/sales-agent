@@ -26,12 +26,12 @@ export async function GET() {
     
     // Format conversations with last message and automation info
     const formattedConversations = conversations?.map(conv => {
-      const sortedMessages = conv.messages?.sort((a: any, b: any) => 
+      const sortedMessages = conv.messages?.sort((a: { created_at: string }, b: { created_at: string }) => 
         new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
       ) || [];
       
       // Check if any outbound messages were automated (approved_by_user_id = 0)
-      const hasAutomatedMessages = sortedMessages.some((msg: any) => 
+      const hasAutomatedMessages = sortedMessages.some((msg: { direction: string; approved_by_user_id?: number }) => 
         msg.direction === 'outbound' && msg.approved_by_user_id === 0
       );
       
@@ -53,8 +53,8 @@ export async function GET() {
     });
     
     return NextResponse.json(formattedConversations || []);
-  } catch (error) {
-    console.error('Error fetching email conversations:', error);
+  } catch {
+    console.error('Error fetching email conversations');
     return NextResponse.json({ error: 'Failed to fetch conversations' }, { status: 500 });
   }
 }

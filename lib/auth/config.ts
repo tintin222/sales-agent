@@ -23,10 +23,16 @@ export function generateToken(userId: number, email: string, role: string): stri
   );
 }
 
-export function verifyToken(token: string): any {
+interface TokenPayload {
+  userId: number;
+  email: string;
+  role: string;
+}
+
+export function verifyToken(token: string): TokenPayload | null {
   try {
-    return jwt.verify(token, JWT_SECRET);
-  } catch (error) {
+    return jwt.verify(token, JWT_SECRET) as TokenPayload;
+  } catch {
     return null;
   }
 }

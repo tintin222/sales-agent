@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { Building, User, Mail, Lock, Loader, CheckCircle } from 'lucide-react';
 
@@ -16,11 +16,7 @@ export default function SetupPage() {
   const [adminPassword, setAdminPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
-  useEffect(() => {
-    checkSetup();
-  }, []);
-
-  const checkSetup = async () => {
+  const checkSetup = useCallback(async () => {
     try {
       const response = await fetch('/api/auth/setup-status');
       const data = await response.json();
@@ -28,12 +24,16 @@ export default function SetupPage() {
       if (data.isSetup) {
         router.push('/login');
       }
-    } catch (error) {
-      console.error('Error checking setup status:', error);
+    } catch {
+      console.error('Error checking setup status');
     } finally {
       setChecking(false);
     }
-  };
+  }, [router]);
+
+  useEffect(() => {
+    checkSetup();
+  }, [checkSetup]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -72,7 +72,7 @@ export default function SetupPage() {
       } else {
         alert(data.error || 'Setup failed');
       }
-    } catch (error) {
+    } catch {
       alert('An error occurred during setup');
     } finally {
       setLoading(false);
@@ -94,7 +94,7 @@ export default function SetupPage() {
           <>
             <div className="text-center mb-8">
               <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome to Sales Agent AI</h1>
-              <p className="text-gray-600">Let\'s set up your account</p>
+              <p className="text-gray-600">Let&apos;s set up your account</p>
             </div>
 
             <form onSubmit={(e) => { e.preventDefault(); setStep(2); }} className="space-y-6">

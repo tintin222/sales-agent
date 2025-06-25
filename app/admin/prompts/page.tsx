@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Save, Plus } from 'lucide-react';
+import { Save } from 'lucide-react';
 
 interface SystemPrompt {
   id: number;
