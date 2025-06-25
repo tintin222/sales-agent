@@ -22,7 +22,13 @@ interface EmailConversation {
     direction: string;
     created_at: string;
   };
-  messages?: any[];
+  messages?: {
+    id: number;
+    direction: 'inbound' | 'outbound';
+    content: string;
+    created_at: string;
+    sent_at?: string;
+  }[];
 }
 
 export default function InboxPage() {
@@ -62,9 +68,10 @@ export default function InboxPage() {
       } else {
         alert('No new emails found in the last 7 days');
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error checking emails:', error);
-      alert(`Failed to check emails: ${error.message || 'Unknown error'}`);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      alert(`Failed to check emails: ${errorMessage}`);
     } finally {
       setChecking(false);
     }
